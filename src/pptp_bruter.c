@@ -698,37 +698,74 @@ slot_new(PPTP *pptp, struct _slot *slot)
 }
 
 static void
-usage(char *err)
+usage(char *prog, char *err, int exit_code)
 {
-	if (err)
-		printf("%s", err);
+	FILE *out = stdout;
 
-	printf(""
-"thc-pptp-bruter [options] <remote host IP>\n"
-"  -v        Verbose output / Debug output\n"
-"  -W        Disable windows hack [default: enabled]\n"
-"  -u <user> User [default: administrator]\n"
-"  -w <file> Wordlist file [default: stdin]\n"
-"  -p <n>    PPTP port [default: 1723]\n"
-"  -n <n>    Number of parallel tries [default: 5]\n"
-"  -l <n>    Limit to n passwords / sec [default: 100]\n"
+	if (exit_code != 0)
+		out = stderr;
+
+	if (err)
+		fprintf(out, "%s", err);
+
+	fprintf(out, ""
+"Usage: %s [options] <remote host IP>\n"
 "\n"
-"Windows-Hack reuses the LCP connection with the same caller-id. This\n"
-"gets around MS's anti-brute forcing protection. It's enabled by default.\n"
-"");
-	exit(0);
+"Target:\n"
+"  <remote host IP>  IPv4 address of the PPTP server to test.\n"
+"\n"
+"Options:\n"
+"  -h, --help        Show this help and exit.\n"
+"  -v                Enable verbose/debug output.\n"
+"  -W                Disable the Windows caller-id reuse hack.\n"
+"  -u <user>         Username for authentication attempts.\n"
+"                    Default: administrator\n"
+"  -w <file>         Read passwords from <file> instead of stdin.\n"
+"  -p <port>         PPTP TCP port to connect to.\n"
+"                    Default: 1723\n"
+"  -n <count>        Number of parallel authentication attempts.\n"
+"                    Default: 5 (max: %d)\n"
+"  -l <count>        Limit password attempts per second.\n"
+"                    Default: %d\n"
+"\n"
+"Input:\n"
+"  Passwords are read one per line either from stdin or from the file\n"
+"  provided with -w.\n"
+"\n"
+"Examples:\n"
+"  cat wordlist.txt | %s 192.0.2.10\n"
+"  %s -u administrator -w /tmp/wordlist.txt 192.0.2.10\n"
+"  %s -n 20 -l 50 -p 1723 192.0.2.10\n"
+"\n"
+"Notes:\n"
+"  The Windows hack reuses the same caller-id for multiple LCP attempts,\n"
+"  which helps bypass Microsoft's built-in anti-bruteforce throttling.\n"
+"  TCP port 1723 must be reachable and GRE (protocol 47) must pass.\n",
+		prog, PPTP_BRUTER_MAX_SLOTS, PPTP_BRUTER_DFL_LIMIT, prog, prog, prog);
+	exit(exit_code);
 }
 
 static int
 do_getopt(int argc, char *argv[])
 {
 	int c;
+	int port;
+	int i;
 
+	for (i = 1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "--help") == 0)
+			usage(argv[0], NULL, 0);
+	}
 
-	while ((c = getopt(argc, argv, "Wvn:w:u:h:l:")) != -1)
+	opterr = 0;
+	while ((c = getopt(argc, argv, "Wvn:w:u:p:hl:")) != -1)
 	{
 		switch (c)
 		{
+		case 'h':
+			usage(argv[0], NULL, 0);
+			break;
 		case 'v':
 			opt.flags |= OPT_FLAGS_VERBOSE;
 			break;
@@ -750,19 +787,24 @@ do_getopt(int argc, char *argv[])
 		case 'u':
 			opt.user = optarg;
 			break;
+		case 'p':
+			port = atoi(optarg);
+			if ((port <= 0) || (port > 65535))
+				usage(argv[0], "Invalid PPTP port.\n", 1);
+			opt.port = port;
+			break;
 		case 'w':
 			opt.wordlistfp = fopen(optarg, "r");
 			if (opt.wordlistfp == NULL)
 				PERREXIT("fopen(%s)", optarg);
-		case 'h':
 		default:
-			usage(NULL);
+			usage(argv[0], "Invalid option or missing argument.\n", 1);
 		}
 	}
 
 	opt.host = argv[optind];
 	if (opt.host == NULL)
-		usage("Target IP missing.\n");
+		usage(argv[0], "Target IP missing.\n", 1);
 
 	return 0;
 }
@@ -1189,4 +1231,3 @@ main(int argc, char *argv[])
 	exit(0);
 	return 0;
 }
-
