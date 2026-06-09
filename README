@@ -20,7 +20,23 @@ Performance:
 Usage:
 ======
 
-cat wordlist | ./pptp_bruter [IP]
+cat wordlist | ./thc-pptp-bruter [options] [IP]
+
+Options:
+
+- -h, --help     Show full help
+- -v             Verbose/debug output
+- -W             Disable the Windows caller-id reuse hack
+- -u <user>      Username (default: administrator)
+- -w <file>      Read passwords from file instead of stdin
+- -p <port>      PPTP TCP port (default: 1723)
+- -n <count>     Number of parallel tries (default: 5)
+- -l <count>     Limit passwords per second (default: 100)
+
+Notes:
+
+- Passwords are read one per line from stdin or from the file passed to -w
+- TCP port 1723 must be reachable and GRE (protocol 47) must pass
 
 Requirements:
 =============
@@ -38,4 +54,3 @@ Get your dictionaries from:
 
 2003/06/04
 THC / segfault consortium.
-
