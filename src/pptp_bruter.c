@@ -749,8 +749,9 @@ static int
 do_getopt(int argc, char *argv[])
 {
 	int c;
-	int port;
 	int i;
+	long port;
+	char *endptr;
 
 	for (i = 1; i < argc; i++)
 	{
@@ -788,10 +789,12 @@ do_getopt(int argc, char *argv[])
 			opt.user = optarg;
 			break;
 		case 'p':
-			port = atoi(optarg);
-			if ((port <= 0) || (port > 65535))
+			errno = 0;
+			port = strtol(optarg, &endptr, 10);
+			if ((errno != 0) || (optarg == endptr) || (*endptr != '\0') ||
+			    (port <= 0) || (port > 65535))
 				usage(argv[0], "Invalid PPTP port.\n", 1);
-			opt.port = port;
+			opt.port = (unsigned short int)port;
 			break;
 		case 'w':
 			opt.wordlistfp = fopen(optarg, "r");

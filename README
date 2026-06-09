@@ -24,7 +24,7 @@ cat wordlist | ./thc-pptp-bruter [options] [IP]
 
 Options:
 
-- -h, --help     Show full help
+- --help, -h     Show full help
 - -v             Verbose/debug output
 - -W             Disable the Windows caller-id reuse hack
 - -u <user>      Username (default: administrator)
