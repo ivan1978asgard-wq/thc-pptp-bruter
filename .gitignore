@@ -1,0 +1,8 @@
+Makefile
+src/Makefile
+config.log
+config.status
+config.h
+configure.lineno
+configure~
+autom4te.cache/
