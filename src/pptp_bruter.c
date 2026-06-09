@@ -766,6 +766,8 @@ do_getopt(int argc, char *argv[])
 		{
 		case 'h':
 			usage(argv[0], NULL, 0);
+			/* NOTREACHED */
+			break;
 		case 'v':
 			opt.flags |= OPT_FLAGS_VERBOSE;
 			break;
@@ -792,7 +794,7 @@ do_getopt(int argc, char *argv[])
 			port = strtol(optarg, &endptr, 10);
 			if ((errno != 0) || (optarg == endptr) || (*endptr != '\0') ||
 			    (port <= 0) || (port > 65535))
-				usage(argv[0], "Invalid PPTP port.\n", 1);
+				usage(argv[0], "Invalid PPTP port. Port must be a number between 1 and 65535.\n", 1);
 			opt.port = (unsigned short int)port;
 			break;
 		case 'w':
