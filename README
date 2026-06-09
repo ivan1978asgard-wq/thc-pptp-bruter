@@ -24,14 +24,14 @@ cat wordlist | ./thc-pptp-bruter [options] [IP]
 
 Options:
 
-- -h, --help     Show full help
-- -v             Verbose/debug output
-- -W             Disable the Windows caller-id reuse hack
-- -u <user>      Username (default: administrator)
-- -w <file>      Read passwords from file instead of stdin
-- -p <port>      PPTP TCP port (default: 1723)
-- -n <count>     Number of parallel tries (default: 5)
-- -l <count>     Limit passwords per second (default: 100)
+- `-h, --help`     Show full help
+- `-v`             Verbose/debug output
+- `-W`             Disable the Windows caller-id reuse hack
+- `-u <user>`      Username (default: administrator)
+- `-w <file>`      Read passwords from file instead of stdin
+- `-p <port>`      PPTP TCP port (default: 1723)
+- `-n <count>`     Number of parallel tries (default: 5)
+- `-l <count>`     Limit passwords per second (default: 100)
 
 Notes:
 

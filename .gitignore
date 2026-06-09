@@ -6,3 +6,5 @@ config.h
 configure.lineno
 configure~
 autom4te.cache/
+stamp-h
+*~

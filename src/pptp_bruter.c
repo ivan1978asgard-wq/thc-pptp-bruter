@@ -766,7 +766,6 @@ do_getopt(int argc, char *argv[])
 		{
 		case 'h':
 			usage(argv[0], NULL, 0);
-			break;
 		case 'v':
 			opt.flags |= OPT_FLAGS_VERBOSE;
 			break;
