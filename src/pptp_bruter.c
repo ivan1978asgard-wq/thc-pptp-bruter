@@ -792,7 +792,7 @@ do_getopt(int argc, char *argv[])
 		case 'p':
 			errno = 0;
 			port = strtol(optarg, &endptr, 10);
-			if ((errno != 0) || (optarg == endptr) || (*endptr != '\0') ||
+			if ((errno == ERANGE) || (optarg == endptr) || (*endptr != '\0') ||
 			    (port <= 0) || (port > 65535))
 				usage(argv[0], "Invalid PPTP port. Port must be a number between 1 and 65535.\n", 1);
 			opt.port = (unsigned short int)port;
